@@ -12,10 +12,12 @@ namespace Company.A1.BLL.Repositories
     public class DepartmentRepository : IDepartmentRepository
     {
         private readonly CompanyDbContext _db;  //NULL 
-        
-        public DepartmentRepository ()
+
+        //ASK CLR To Create Object From  CompanyDbContext
+
+        public DepartmentRepository ( CompanyDbContext context)
         {
-            _db = new CompanyDbContext();
+            _db = context;
         }
 
         public IEnumerable<Department> GetAll()
