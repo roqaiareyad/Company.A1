@@ -1,3 +1,8 @@
+using Company.A1.BLL.Interfaces;
+using Company.A1.BLL.Repositories;
+using Company.A1.DAL.Data.Contexts;
+using Microsoft.EntityFrameworkCore;
+
 namespace Company.A1.PL
 {
     public class Program
@@ -6,8 +11,13 @@ namespace Company.A1.PL
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            // Add services to the container. 
+            builder.Services.AddControllersWithViews(); //Register Built-in  MVC Services
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();  //Allow DI for DepartmentRepository
+            builder.Services.AddDbContext<CompanyDbContext>(options =>
+            { 
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            }); //Allow DI for  CompanyDbContext
 
             var app = builder.Build();
 
