@@ -14,7 +14,8 @@ namespace Company.A1.PL
             // Add services to the container. 
             builder.Services.AddControllersWithViews(); //Register Built-in  MVC Services
             builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();  //Allow DI for DepartmentRepository
-            builder.Services.AddDbContext<CompanyDbContext>(options =>
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); //Allow DI for EmployeeRepository
+            builder.Services.AddDbContext<CompanyDbContext>(options => 
             { 
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             }); //Allow DI for  CompanyDbContext
