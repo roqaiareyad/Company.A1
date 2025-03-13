@@ -9,50 +9,12 @@ using Company.A1.DAL.Models;
 
 namespace Company.A1.BLL.Repositories
 {
-    public class DepartmentRepository : IDepartmentRepository
+    public class DepartmentRepository : GenericRepository<Department>, IDepartmentRepository
     {
-        private readonly CompanyDbContext _db;  //NULL 
+   
+        public DepartmentRepository(CompanyDbContext context) :base(context)
+        { 
 
-        //ASK CLR To Create Object From  CompanyDbContext
-
-        public DepartmentRepository ( CompanyDbContext context)
-        {
-            _db = context;
-        }
-
-        public IEnumerable<Department> GetAll()
-        {
-            return _db.Departments.ToList();
-
-        }
-
-        public Department? Get(int id)
-        {
-         
-            return _db.Departments.Find(id);
-        }
-
-        public int Add(Department model)
-        {
-           
-            _db.Departments.Add(model);
-            return _db.SaveChanges();
-        }
-
-        public int Update(Department model)
-        {
-          
-            _db.Departments.Update(model);
-            return _db.SaveChanges();
-        }
-
-        public int Delete(Department model)
-        {
-            _db.Departments.Remove(model);
-            return _db.SaveChanges();
-        }
-
-    
-
+        }   
     }
 }
