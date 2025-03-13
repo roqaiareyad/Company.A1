@@ -66,7 +66,7 @@ namespace Company.A1.PL.Controllers
         {
             if (id is null) return BadRequest("Invalid Id"); //400
             var employee = _employeeRepository.Get(id.Value);
-            if (employee == null) return NotFound(new { statusCode = 404, message = $"Department with Id :{id} is not Found" });
+            if (employee == null) return NotFound(new { statusCode = 404, message = $"employee with Id :{id} is not Found" });
             return View(viewName, employee);
         }
 
@@ -74,19 +74,50 @@ namespace Company.A1.PL.Controllers
         public IActionResult Edit(int? id)
         {
 
-            //if (id is null) return BadRequest("Invalid Id"); //400
-            //var department = _departmentRepository.Get(id.Value);
-            //if (department == null) return NotFound(new { statusCode = 404, message = $"Department with Id :{id} is not Found" });
-            return Details(id, "Edit");
+            if (id is null) return BadRequest("Invalid Id"); //400
+
+            var employee = _employeeRepository.Get(id.Value);
+            if (employee == null) return NotFound(new { statusCode = 404, message = $"Employee with Id :{id} is not Found" });
+            var employeeDto = new Employee()
+            {
+          
+                Name = employee.Name,
+                Address = employee.Address,
+                Age = employee.Age,
+                CreateAt = employee.CreateAt,
+                HiringDate = employee.HiringDate,
+                Email = employee.Email,
+                IsActive = employee.IsActive,
+                IsADeleted = employee.IsADeleted,
+                Phone = employee.Phone,
+                Salary = employee.Salary,
+
+            };
+            return View(employeeDto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int id, Employee employee)
+        public IActionResult Edit([FromRoute] int id, Employee model)
         {
             if (ModelState.IsValid)
             {
-                if (id != employee.Id) return BadRequest();    //400
+                //if (id != employee.Id) return BadRequest();    //400
+                var employee = new Employee()
+                {
+                    Id = id,
+                    Name = model.Name,
+                    Address = model.Address,
+                    Age = model.Age,
+                    CreateAt = model.CreateAt,
+                    HiringDate = model.HiringDate,
+                    Email = model.Email,
+                    IsActive = model.IsActive,
+                    IsADeleted = model.IsADeleted,
+                    Phone = model.Phone,
+                    Salary = model.Salary,
+
+                };
                 var count = _employeeRepository.Update(employee);
                 if (count > 0)
                 {
@@ -96,7 +127,7 @@ namespace Company.A1.PL.Controllers
             }
 
 
-            return View(employee);
+            return View(model);
         }
 
         //[HttpPost]
