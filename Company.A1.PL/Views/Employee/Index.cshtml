@@ -4,7 +4,12 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+@if(!string.IsNullOrEmpty(TempData["Message"] as string))
+{
+    <div class="m-3 alert alert-info">
+        <p>@TempData["Message"]</p>
+    </div>
+}
 <h1>All Employee</h1>
 <br />
 <br />
@@ -28,6 +33,7 @@
                 <th>IsADeleted</th>
                 <th>@Html.DisplayNameFor(E => E.HiringDate)</th>
                 <th>@Html.DisplayNameFor(E => E.CreateAt)</th>
+                <th>Department</th>
                 <th>Details</th>
                 <th>Update</th>
                 <th>Delete</th>
@@ -47,7 +53,15 @@
                     <td>@item.IsActive</td>
                     <td>@item.IsADeleted</td>
                     <td>@item.HiringDate</td>
-
+                    <td>@item.CreateAt</td>
+                    @if(item.Department is null)
+                    {
+                        <td>No Department</td>
+                    }
+                    else
+                    {
+                        <td>@item.Department.Name</td>
+                    }
                    <partial name="_ButtonPartialView" model ="@item.Id" />
                 </tr>
             }

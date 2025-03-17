@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Company.A1.DAL.Models;
 
 namespace Company.A1.PL.Dtos
 {
@@ -30,5 +31,8 @@ namespace Company.A1.PL.Dtos
         [DisplayName("Date of Create")]
         public DateTime HiringDate { get; set; }
 
+        [DisplayName("Department")]
+        public int? DepartmentId { get; set; }
+        public Department? Department { get; set; }
     }
 }

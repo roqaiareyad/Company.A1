@@ -12,5 +12,6 @@ namespace Company.A1.DAL.Models
         public string Code { get; set; }
         public string Name { get; set; }
         public DateTime CreatedDate { get; set; }
+        public List<Employee> Employees { get; set; }
     }
 }

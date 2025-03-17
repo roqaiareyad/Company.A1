@@ -94,32 +94,6 @@ namespace Company.A1.PL.Controllers
             return View(department);
         }
 
-        //[HttpPost]
-        ////[ValidateAntiForgeryToken]
-        //public IActionResult Edit([FromRoute] int id, UpdateDepartmentDto model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var department = new Department
-        //        {
-        //            Id = id,
-        //            Name = model.Name,
-        //            Code = model.Code,
-        //            CreatedDate = model.CreatedDate,
-
-
-        //        };
-        //        var count = _departmentRepository.Update(department);
-        //        if (count > 0)
-        //        {
-        //            return RedirectToAction(nameof(Index));
-        //        }
-
-        //    }
-
-        //    return View(model);
-        //}
-
 
         [HttpGet]
         public IActionResult Delete(int? id)

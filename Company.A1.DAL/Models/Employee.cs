@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Company.A1.DAL.Models
 {
@@ -20,7 +21,8 @@ namespace Company.A1.DAL.Models
         public DateTime CreateAt { get; set; }
         public DateTime HiringDate { get; set; }
 
-
+        public int? DepartmentId { get; set; }
+        public Department? Department { get; set; }
 
     }
 }
