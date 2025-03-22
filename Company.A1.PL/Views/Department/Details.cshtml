@@ -1,5 +1,6 @@
 ﻿@model Department
 
+
 @{
     ViewData["Title"] = "Details";
 }
@@ -7,24 +8,14 @@
 <h1>Details Page</h1>
 <br />
 <br />
+<form asp-action="Details">
+    <partial name="DepartmentPartialView/_DeleteDetailsPartialView" />
+
+    <div class="my-3">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-light">Back To List</a>
+    </div>
+</form>
 
 
-<div>
-    <div class="form-group">
-        <label asp-for="Code" class="col-form-label"></label>
-        <input readonly asp-for="Code" class="form-control" />
-        <span asp-validation-for="Code" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Name" class="col-form-label"></label>
-        <input readonly asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CreatedDate" class="col-form-label"></label>
-        <input readonly asp-for="CreatedDate" class="form-control" />
-    </div>
 
-    <a asp-controller="Department" asp-action="Edit" class="btn btn-warning">Edit</a>
-    <a asp-controller="Department" asp-action="Index" class="btn btn-light">Back To List</a>
-</div>

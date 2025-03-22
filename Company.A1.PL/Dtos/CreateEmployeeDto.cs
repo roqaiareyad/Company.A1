@@ -25,14 +25,11 @@ namespace Company.A1.PL.Dtos
         public decimal Salary { get; set; }
         public bool IsActive { get; set; }
         public bool IsADeleted { get; set; }
-
+        [DisplayName("Hiring Date")]
+        public DateTime HiringDate { get; set; }
+        [DisplayName("Date Of Creation")]
         public DateTime CreateAt { get; set; }
 
-        [DisplayName("Date of Create")]
-        public DateTime HiringDate { get; set; }
-
-        [DisplayName("Department")]
         public int? DepartmentId { get; set; }
-        public Department? Department { get; set; }
     }
 }
