@@ -12,7 +12,8 @@ namespace Company.A1.BLL.Interfaces
         IDepartmentRepository DepartmentRepository { get; }
         IEmployeeRepository EmployeeRepository { get; }
 
-        int Compelete();
+        Task<int> CompleteAsync();
+  
 
     }
 }

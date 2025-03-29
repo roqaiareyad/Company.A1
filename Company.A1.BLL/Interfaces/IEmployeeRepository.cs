@@ -9,16 +9,7 @@ namespace Company.A1.BLL.Interfaces
 {
     public interface IEmployeeRepository : IGenericRepository<Employee>
     {
-        List<Employee> GetByName(string name);
-
-
-        //IEnumerable<Emplyee> GetAll();
-
-        //Emplyee? Get(int id);
-
-        //int Add(Emplyee model);
-        //int Update(Emplyee model);
-        //int Delete(Emplyee model);
+        Task<List<Employee>> GetByNameAsync(string name);
 
     }
 }

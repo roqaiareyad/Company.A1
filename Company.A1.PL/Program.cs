@@ -1,6 +1,9 @@
 using Company.A1.BLL.Interfaces;
 using Company.A1.BLL.Repositories;
 using Company.A1.DAL.Data.Contexts;
+using Company.A1.PL.Mapping;
+using Company.A1.PL.Services;
+using Company.G01.BLL;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.A1.PL
@@ -13,12 +16,30 @@ namespace Company.A1.PL
 
             // Add services to the container. 
             builder.Services.AddControllersWithViews(); //Register Built-in  MVC Services
-            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();  //Allow DI for DepartmentRepository
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); //Allow DI for EmployeeRepository
-            builder.Services.AddDbContext<CompanyDbContext>(options => 
-            { 
+            //builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();  //Allow DI for DepartmentRepository
+            //builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); //Allow DI for EmployeeRepository
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddDbContext<CompanyDbContext>(options =>
+            {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            }); //Allow DI for  CompanyDbContext
+            }, ServiceLifetime.Scoped);
+
+
+
+            //builder.Services.AddAutoMapper(typeof(EmployeeProfile));
+            builder.Services.AddAutoMapper(M => M.AddProfile(new EmployeeProfile()));
+
+            // Life Time
+             
+            //builder.Services.AddScoped();      // Create Object Life Time Per Request UnReachable-Object
+
+            // builder.Services.AddTransient();  // Create Object Life Time Per Operation
+
+            //builder.Services.AddSingleton();  // Create Object Life Timer Per App
+
+            builder.Services.AddScoped<IScopedService, ScopedService>();    //Per Request
+            builder.Services.AddTransient<ITransientService, TransientService>(); //Per Operation
+            builder.Services.AddSingleton<ISingletonServices, SingletonServices>(); // APP
 
             var app = builder.Build();
 

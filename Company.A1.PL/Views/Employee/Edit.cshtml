@@ -7,16 +7,24 @@
 <br />
 <br />
 
-<form asp-action="Edit">
+<form asp-action="Edit" enctype="multipart/form-data">
 
-    <partial name="EmployeePartialView/_CreateEditPartialView" model="@Model" />
+    <partial name="EmployeePartialView/_CreateEditPartialView"  />
 
-    <input type="submit" value="Save" class="btn btn-primary" />
-    <a asp-action="Index" class="btn btn-light">Back To List</a>
+    <div class="mb-3">
+        <label asp-for="Image" class="form-label">Upload Image</label>
+        <input type="file" asp-for="Image" class="form-control" id="imageUpload" onchange="updateFileName()" />
+        <span asp-validation-for="Image" class="text-danger"></span>
+    </div>
+
+    <input asp-for="ImageName" hidden />
+    <div>
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-light">Back To List</a>
+    </div>
+   
 </form>
 
 @section ValidationSection {
-
-    <script src="./lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="./lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <partial name="_ValidationScriptsPartial"></partial>
 }

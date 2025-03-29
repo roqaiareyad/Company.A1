@@ -27,9 +27,14 @@ namespace Company.A1.PL.Dtos
         public bool IsADeleted { get; set; }
         [DisplayName("Hiring Date")]
         public DateTime HiringDate { get; set; }
+
         [DisplayName("Date Of Creation")]
-        public DateTime CreateAt { get; set; }
+        public DateTime CreateAt { get; set; } = DateTime.UtcNow;
 
         public int? DepartmentId { get; set; }
+        public string? DepartmentName { get; set; }
+        public IFormFile? Image { get; set; }
+        public string? ImageName { get; set; }
+       
     }
 }

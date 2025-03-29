@@ -34,7 +34,7 @@
     <div class="container m-4">
         <div class="row">
             <div class="col-6">
-                <input placeholder="Search By Name" name="SearchInput" class="form-control" />
+                <input id=" SearchInput " placeholder="Search By Name" name="SearchInput" class="form-control" />
             </div>
             <div class="col-6">
                 <input type="submit" class="btn btn-success" value="Search" />
@@ -53,6 +53,7 @@
         <thead>
             <tr>
 
+                <th>Image</th>
                 <th>Name</th>
                 <th>Age</th>
                 <th>Email</th>
@@ -75,6 +76,9 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>
+                       <img src="~/files/images/@(item.ImageName ?? "default.png")" class="img-fluid rounded-circle"/>
+                    </td>
                     <td>@item.Name</td>
                     <td>@item.Age</td>
                     <td>@item.Email</td>
