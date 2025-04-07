@@ -1,0 +1,30 @@
+﻿@model CreateEmployeeDto
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Employee</h1>
+<br />
+<br />
+
+<form asp-action="Edit" enctype="multipart/form-data">
+
+    <partial name="EmployeePartialView/_CreateEditPartialView"  />
+
+    <div class="mb-3">
+        <label asp-for="Image" class="form-label">Upload Image</label>
+        <input type="file" asp-for="Image" class="form-control" id="imageUpload" onchange="updateFileName()" />
+        <span asp-validation-for="Image" class="text-danger"></span>
+    </div>
+
+    <input asp-for="ImageName" hidden />
+    <div>
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-light">Back To List</a>
+    </div>
+   
+</form>
+
+@section ValidationSection {
+    <partial name="_ValidationScriptsPartial"></partial>
+}

@@ -5,11 +5,13 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Company.A1.DAL.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Company.A1.DAL.Data.Contexts
 {
-    public class CompanyDbContext : DbContext
+    public class CompanyDbContext : IdentityDbContext<AppUser>
     {
         //CLR
 
@@ -28,5 +30,6 @@ namespace Company.A1.DAL.Data.Contexts
 
         public DbSet<Department> Departments { get; set; }   
         public DbSet<Employee> Employees { get; set; }
+        
     }
 }

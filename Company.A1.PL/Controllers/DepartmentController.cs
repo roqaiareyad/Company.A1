@@ -4,9 +4,11 @@ using Company.A1.BLL.Interfaces;
 using Company.A1.PL.Dtos;
 using Microsoft.Net.Http.Headers;
 using Company.A1.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 namespace Company.A1.PL.Controllers
 {
     //MVC Controller
+    [Authorize]
     public class DepartmentController : Controller
     {
 
