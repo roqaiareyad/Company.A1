@@ -1,7 +1,7 @@
-﻿using Company.A1.DAL.Models.Sms;
+﻿using Company.A1.PL.Helpers;
 using Twilio.Rest.Api.V2010.Account;
 
-namespace Company.A1.PL.Helpers
+namespace Company.A1.PL.Authentication
 {
     public interface ITwilioService
     {

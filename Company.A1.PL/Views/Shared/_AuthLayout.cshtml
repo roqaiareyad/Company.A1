@@ -1,4 +1,5 @@
-﻿<!--
+﻿﻿
+<!--
 Author: Colorlib
 Author URL: https://colorlib.com
 License: Creative Commons Attribution 3.0 Unported
@@ -22,17 +23,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	<!-- main -->
 	<div class="main-w3layouts wrapper">
 		<h1>Creative @ViewData["Title"] Form</h1>
-
-
-
 		@RenderBody()
-
-	
-		<!-- copyright -->
-		<div class="colorlibcopy-agile">
-			<p>© 2018 Colorlib Signup Form. All rights reserved | Design by <a href="https://colorlib.com/" target="_blank">Colorlib</a></p>
-		</div>
-		<!-- //copyright -->
 		<ul class="colorlib-bubbles">
 			<li></li>
 			<li></li>
@@ -48,6 +39,6 @@ License URL: http://creativecommons.org/licenses/by/3.0/
 	</div>
 	<!-- //main -->
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	@await RenderSectionAsync("ValidationSection", required:false)
+	@await RenderSectionAsync("ValidationSection", required: false)
 </body>
 </html>

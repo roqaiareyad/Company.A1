@@ -1,4 +1,6 @@
-﻿namespace Company.A1.PL.Helpers
+﻿using Company.A1.PL.Helpers;
+
+namespace Company.A1.PL.Authentication
 {
     public interface IMailService
     {

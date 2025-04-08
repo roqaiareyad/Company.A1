@@ -13,9 +13,10 @@ namespace Company.A1.BLL.Repositories
     public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     {
         private readonly CompanyDbContext _context;
+
         public GenericRepository(CompanyDbContext context)
         {
-            _context = context;
+            this._context = context;
         }
         public async Task<IEnumerable<T>> GetAllAsync()
         {
@@ -23,7 +24,6 @@ namespace Company.A1.BLL.Repositories
             {
                 return (IEnumerable<T>)await _context.Employees.Include(E => E.Department).ToListAsync();
             }
-
             return await _context.Set<T>().ToListAsync();
         }
         public async Task<T?> GetAsync(int id)
@@ -32,35 +32,22 @@ namespace Company.A1.BLL.Repositories
             {
                 return await _context.Employees.Include(E => E.Department).FirstOrDefaultAsync(E => E.Id == id) as T;
             }
-            return _context.Set<T>().Find(id);
+            return await _context.Set<T>().FindAsync(id);
         }
+
         public async Task AddAsync(T model)
         {
-          await _context.AddAsync(model);
-         
+            await _context.Set<T>().AddAsync(model);
         }
         public void Update(T model)
         {
-        //    if (typeof(T) == typeof(Employee))
-        //    {
-        //        var employee = _context.Employees.AsNoTracking().FirstOrDefault(e => e.Id == (model as Employee).Id);
-        //        if (employee == null)
-        //        {
-        //            throw new Exception("Employee not found");
-        //        }
-        //    }
-
-            _context.Update(model);
-         
+            _context.Set<T>().Update(model);
         }
-
         public void Delete(T model)
         {
-            _context.Remove(model);
-    
+            _context.Set<T>().Remove(model);
         }
 
-   
     }
 
 }

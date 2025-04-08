@@ -1,19 +1,17 @@
 ﻿@model SignUpDto
 
-
 @{
-    ViewData["Title"] = "SignUp";
-    Layout = "~/Views/Shared/_AuthLayout.cshtml";
+	ViewData["Title"] = "SignUp";
+	Layout = "~/Views/Shared/_AuthLayout.cshtml";
 }
-
 
 <div class="main-agileinfo">
 	<div class="agileits-top">
-		<div asp-validation-summary="All" class="m-3 alert alert-info"></div>
-		<form asp-action ="SignUp" >
-			<input class="text" asp-for="UserName" placeholder="User name" required="">
-			<input class="text" asp-for="FirstName" placeholder="First name" required="">
-			<input class="text" asp-for="LastName" placeholder="Last name" required="">
+		<div asp-validation-summary="All"></div>
+		<form asp-action="SignUp">
+			<input class="text" asp-for="UserName" placeholder="Username" required="">
+			<input class="text" asp-for="FirstName" placeholder="First Name" required="">
+			<input class="text" asp-for="LastName" placeholder="Last Name" required="">
 			<input class="text email" asp-for="Email" placeholder="Email" required="">
 			<input class="text" asp-for="Password" placeholder="Password" required="">
 			<input class="text w3lpass" asp-for="ConfirmPassword" placeholder="Confirm Password" required="">
@@ -24,14 +22,13 @@
 				</label>
 				<div class="clear"> </div>
 			</div>
-			<input type="submit" value="SIGNUP">
+			<input type="submit" value="SignUp">
 		</form>
-		<p>Don't have an Account? <a asp-action="SignIn" > Login Now!</a></p>
+		<p>Don't have an Account? <a asp-action="SignIn"> Login Now!</a></p>
 	</div>
 </div>
 
-@section ValidationSection{
+@section ValidationSection {
 	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
 }

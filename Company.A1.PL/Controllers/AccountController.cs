@@ -1,5 +1,5 @@
 ﻿using Company.A1.DAL.Models;
-using Company.A1.DAL.Models.Sms;
+using Company.A1.PL.Authentication;
 using Company.A1.PL.Controllers;
 using Company.A1.PL.Dtos;
 using Company.A1.PL.Helpers;
@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp;
 using NuGet.DependencyResolver;
+using Twilio.TwiML.Voice;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Sms = Company.A1.PL.Helpers.Sms;
 
 namespace Company.Route.PL.Controllers
 {
@@ -28,40 +30,34 @@ namespace Company.Route.PL.Controllers
             _mailService = mailService;
             _twilioService = twilioService;
         }
-
-        // P@$sw0rd
-        #region Signup
-
-        [HttpGet] //Account/SignUp
+        [HttpGet]
         public IActionResult SignUp()
         {
             return View();
         }
 
-        //P@$sw0rd
         [HttpPost]
-        public async Task<IActionResult> SignUp(SignUpDto model)
+        public async Task<IActionResult> SignUp(SignUpDto signUpDto)
         {
-            if (ModelState.IsValid) // Server Side Validation
+            if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.UserName);
+                var user = await _userManager.FindByNameAsync(signUpDto.UserName);
                 if (user is null)
                 {
-                    user = await _userManager.FindByEmailAsync(model.Email);
+                    user = await _userManager.FindByEmailAsync(signUpDto.Email);
                     if (user is null)
                     {
                         user = new AppUser()
                         {
-                            UserName = model.UserName,
-                            FirstName = model.FirstName,
-                            LastName = model.LastName,
-                            Email = model.Email,
-                            IsAgree = model.IsAgree
+                            UserName = signUpDto.UserName,
+                            FirstName = signUpDto.FirstName,
+                            LastName = signUpDto.LastName,
+                            Email = signUpDto.Email,
+                            IsAgree = signUpDto.IsAgree
                         };
-                        var result = await _userManager.CreateAsync(user, model.Password);
+                        var result = await _userManager.CreateAsync(user, signUpDto.Password);
                         if (result.Succeeded)
                         {
-                            // Send Email to confirm Email
                             return RedirectToAction("SignIn");
                         }
                         foreach (var error in result.Errors)
@@ -70,23 +66,17 @@ namespace Company.Route.PL.Controllers
                         }
                     }
                 }
-                ModelState.AddModelError("", "Invalid SignUp");
 
+                ModelState.AddModelError("", "Invalid Sign Up !!!!");
 
             }
             return View();
         }
-
-        #endregion
-
-        #region Signin
-
         [HttpGet]
         public IActionResult SignIn()
         {
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInDto model)
         {
@@ -98,40 +88,34 @@ namespace Company.Route.PL.Controllers
                     var flag = await _userManager.CheckPasswordAsync(user, model.Password);
                     if (flag)
                     {
-                        //Sign in
-                        var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false); // Making Token 
+                        var result = await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
                         if (result.Succeeded)
                         {
                             return RedirectToAction(nameof(HomeController.Index), "Home");
                         }
-
                     }
                 }
-                ModelState.AddModelError("", "Invalid Login");
+                ModelState.AddModelError("", "Invalid Login !!");
             }
             return View();
         }
-
-
-        #endregion
-
-        #region Signout
         [HttpGet]
-        public new async Task<IActionResult> SignOut()
+        public new async Task<IActionResult> SignOut() // new because we want to hide the existing SignOut();
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction(nameof(SignIn));
         }
-
-        #endregion
-
-        #region Forget Password
-
         [HttpGet]
         public IActionResult ForgetPassword()
         {
             return View();
         }
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> SendResetPasswordUrl(ForgetPasswordDto model)
@@ -141,88 +125,57 @@ namespace Company.Route.PL.Controllers
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user is not null)
                 {
-                    // Genrate Token
-
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                    //Create URL
-
                     var url = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
-
-                    // Create Email
-                    var email = new Email()
+                    var email = new Email
                     {
                         To = model.Email,
-                        Subject = "Company Reset Password",
-                        Body = url
+                        Subject = "Password Reset",
+                        Body = url!
                     };
-                    // Send Email
-
-                    //var flag=EmailSettings.SendEmail(email); // Old way
                     _mailService.SendEmail(email);
-                    return RedirectToAction("CheckYourInbox", "Account");
+                    return RedirectToAction("CheckYourInbox");
+
 
                 }
             }
-
-            ModelState.AddModelError("", "Invalid Reset Password");
-            return View("ForgetPassword", model);
+            ModelState.AddModelError("", "Invalid Data");
+            return View("ForgetPassword");
         }
-
-        public IActionResult CheckYourPhone()
-        {
-            return View();
-        }
-        public IActionResult AccessDenied()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public async Task<IActionResult> SendSms(ForgetPasswordDto model)
+        public async Task<IActionResult> SendResetPasswordUrlSms(ForgetPasswordDto model)
         {
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
                 if (user is not null)
                 {
-                    // Genrate Token
-
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                    //Create URL
-
                     var url = Url.Action("ResetPassword", "Account", new { email = model.Email, token }, Request.Scheme);
-
-                    // Create Sms
-                    var sms = new Sms()
+                    var sms = new Sms
                     {
-                        To = user.PhoneNumber,
-                        Body = url
+                        To = user.PhoneNumber!,
+                        Body = url!
                     };
-                    // Send sms
-
-                    //var flag=EmailSettings.SendEmail(email); // Old way
                     _twilioService.SendSms(sms);
                     return RedirectToAction("CheckYourPhone");
 
+
                 }
             }
-
-            ModelState.AddModelError("", "Invalid Reset Password");
-            return View("ForgetPassword", model);
+            ModelState.AddModelError("", "Invalid Data");
+            return View("ForgetPassword");
         }
-
         [HttpGet]
         public IActionResult CheckYourInbox()
         {
             return View();
         }
-
-        #endregion
-
-        #region Reset Password
-
+        [HttpGet]
+        public IActionResult CheckYourPhone()
+        {
+            return View();
+        }
         [HttpGet]
         public IActionResult ResetPassword(string email, string token)
         {
@@ -230,7 +183,6 @@ namespace Company.Route.PL.Controllers
             TempData["token"] = token;
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> ResetPassword(ResetPasswordDto model)
         {
@@ -238,27 +190,21 @@ namespace Company.Route.PL.Controllers
             {
                 var email = TempData["email"] as string;
                 var token = TempData["token"] as string;
-
-                if (email == null || token == null)
-                {
-                    return BadRequest("Invalid Operation");
-                }
+                if (email is null || token is null) return BadRequest("Invalid Operation");
                 var user = await _userManager.FindByEmailAsync(email);
                 if (user is not null)
                 {
                     var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
                     if (result.Succeeded)
                     {
+                        TempData["SuccessMessage"] = "Successfully Reset Password";
                         return RedirectToAction("SignIn");
                     }
                 }
-                ModelState.AddModelError("", "Invalid reset Password operation");
+                ModelState.AddModelError("", "Invalid Reset Password");
             }
             return View();
         }
-
-        #endregion
-
 
         public IActionResult GoogleLogin()
         {
@@ -268,24 +214,20 @@ namespace Company.Route.PL.Controllers
             };
             return Challenge(prop, GoogleDefaults.AuthenticationScheme);
         }
-
         public async Task<IActionResult> GoogleResponse()
         {
             var result = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
-
-            var cliams = result.Principal.Identities.FirstOrDefault().Claims.Select(
-                claim => new
-                {
-                    claim.Type,
-                    claim.Value,
-                    claim.Issuer,
-                    claim.OriginalIssuer,
-                }
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(
+                    claim => new
+                    {
+                        claim.Type,
+                        claim.Value,
+                        claim.Issuer,
+                        claim.OriginalIssuer
+                    }
                 );
-
             return RedirectToAction("Index", "Home");
         }
-
         public IActionResult FacebookLogin()
         {
             var prop = new AuthenticationProperties()
@@ -294,21 +236,18 @@ namespace Company.Route.PL.Controllers
             };
             return Challenge(prop, FacebookDefaults.AuthenticationScheme);
         }
-
         public async Task<IActionResult> FacebookResponse()
         {
             var result = await HttpContext.AuthenticateAsync(FacebookDefaults.AuthenticationScheme);
-
-            var cliams = result.Principal.Identities.FirstOrDefault().Claims.Select(
-                claim => new
-                {
-                    claim.Type,
-                    claim.Value,
-                    claim.Issuer,
-                    claim.OriginalIssuer,
-                }
+            var claims = result.Principal.Identities.FirstOrDefault().Claims.Select(
+                    claim => new
+                    {
+                        claim.Type,
+                        claim.Value,
+                        claim.Issuer,
+                        claim.OriginalIssuer
+                    }
                 );
-
             return RedirectToAction("Index", "Home");
         }
     }

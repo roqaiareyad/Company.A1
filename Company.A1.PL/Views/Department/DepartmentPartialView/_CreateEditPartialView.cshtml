@@ -1,5 +1,4 @@
 ﻿@model CreateDepartmentDto
-
 <div class="my-3">
     <label asp-for="Code" class="col-form-label"></label>
     <input asp-for="Code" class="form-control" />
@@ -9,9 +8,14 @@
     <label asp-for="Name" class="col-form-label"></label>
     <input asp-for="Name" class="form-control" />
     <span asp-validation-for="Name" class="text-danger"></span>
+
 </div>
 <div class="my-3">
-    <label asp-for="CreatedDate" class="col-form-label"></label>
-    <input asp-for="CreatedDate" class="form-control" />
-    <span asp-validation-for="CreatedDate" class="text-danger"></span>
+    <label asp-for="CreateAt" class="col-form-label"></label>
+    <input asp-for="CreateAt" class="form-control" />
+    <span asp-validation-for="CreateAt" class="text-danger"></span>
+    <div class="my-3">
+        <input type="submit" value="Save" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-light">Back To List</a>
+    </div>
 </div>

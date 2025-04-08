@@ -1,5 +1,6 @@
 ﻿using Company.A1.DAL.Models;
 using Company.A1.PL.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -8,24 +9,21 @@ using static Company.A1.PL.Dtos.RoleToReturn;
 
 namespace Company.A1.PL.Controllers
 {
-    public class RoleController : Controller
-    {
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly UserManager<AppUser> _userManager;
 
-        public RoleController(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager)
-        {
-            _roleManager = roleManager;
-            _userManager = userManager;
-        }
+    [Authorize(Roles = "Admin")]
+    public class RoleController(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager) : Controller
+    {
+        private readonly RoleManager<IdentityRole> _roleManager = roleManager;
+        private readonly UserManager<AppUser> _userManager = userManager;
 
         [HttpGet]
         public async Task<IActionResult> Create()
         {
+
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(RoleToReturnDto model)
+        public async Task<IActionResult> Create(RoleToReturn model)
         {
             if (ModelState.IsValid)
             {
@@ -34,154 +32,121 @@ namespace Company.A1.PL.Controllers
                 {
                     role = new IdentityRole()
                     {
-                        Name = model.Name,
+                        Name = model.Name
                     };
                     var result = await _roleManager.CreateAsync(role);
-                    if (result.Succeeded)
-                    {
-                        return RedirectToAction("Index");
-                    }
+                    if (result.Succeeded) return RedirectToAction(nameof(Index));
                 }
 
             }
-            return View();
+            return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> Index(string? SearchInput)
         {
-            IEnumerable<RoleToReturnDto> roles;
+            IEnumerable<RoleToReturn> roles;
             if (string.IsNullOrEmpty(SearchInput))
             {
-                roles = _roleManager.Roles.Select(U => new RoleToReturnDto()
+                roles = _roleManager.Roles.Select(U => new RoleToReturn
                 {
                     Id = U.Id,
-                    Name = U.Name,
+                    Name = U.Name
 
                 });
             }
             else
             {
-                roles = _roleManager.Roles.Select(U => new RoleToReturnDto()
+                roles = _roleManager.Roles.Select(U => new RoleToReturn
                 {
                     Id = U.Id,
-                    Name = U.Name,
+                    Name = U.Name
 
-                }).Where(U => U.Name.ToLower().Contains(SearchInput.ToLower()));
+                }).Where(u => u.Name.ToLower().Contains(SearchInput.ToLower()));
             }
-
             return View(roles);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Details(string? id, string viewname = "Details")
-        {
-            if (id is null) return BadRequest("Invalid Id");
-            var role = await _roleManager.FindByIdAsync(id);
 
-            if (role is null) return NotFound(new { StatusCode = 404, Message = $"Employee with Id: {id} is Not found" });
-            var dto = new RoleToReturnDto()
+        [HttpGet]
+        public async Task<IActionResult> Details(string? id, string viewName = "Details")
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest("Invalid Id");
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role is null) return NotFound(new { StatusCode = 404, message = $"Role with id: {id} is not found" });
+            var dto = new RoleToReturn
             {
                 Id = role.Id,
-                Name = role.Name,
+                Name = role.Name!
             };
-            return View(dto);
+            return View(viewName, dto);
         }
-        [HttpGet]
 
+        [HttpGet]
         public async Task<IActionResult> Edit(string? id)
         {
-
             return await Details(id, "Edit");
         }
+
         [HttpPost]
-        public async Task<IActionResult> Edit([FromRoute] string id, RoleToReturnDto model)
+        public async Task<IActionResult> Edit([FromRoute] string id, RoleToReturn model)
         {
             if (ModelState.IsValid)
             {
-                if (id != model.Id) return BadRequest("Invalid Operation");
+                if (id != model.Id) return BadRequest("Invalid Operations");
                 var role = await _roleManager.FindByIdAsync(id);
-                if (role is null) return BadRequest("Invalid Operation");
-                var roleResult = await _roleManager.FindByNameAsync(role.Name);
-                if (roleResult is not null)
+                if (role is null) return BadRequest("Invalid Operations");
+                var roleResult = await _roleManager.FindByNameAsync(model.Name);
+                if (roleResult is null)
                 {
-                    role.Name = model.Name;
+                    role.Name = model.Name!;
                     var result = await _roleManager.UpdateAsync(role);
                     if (result.Succeeded)
-                    {
                         return RedirectToAction(nameof(Index));
-                    }
                 }
-                ModelState.AddModelError("", "Invalid Operation");
+                ModelState.AddModelError("", "Invalid Operations");
             }
-
             return View(model);
         }
-        [HttpGet]
+
         public async Task<IActionResult> Delete(string? id)
         {
-
-            return await Details(id, "Delete");
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+            var user = await _roleManager.FindByIdAsync(id);
+            if (user is null) return BadRequest("Invalid Operations");
+            var result = await _roleManager.DeleteAsync(user);
+            return RedirectToAction(nameof(Index));
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete([FromRoute] string id, RoleToReturnDto model)
-        {
-            if (ModelState.IsValid)
-            {
-                if (id != model.Id) return BadRequest("Invalid Operation");
-                var role = await _roleManager.FindByIdAsync(id);
-                if (role is null) return BadRequest("Invalid Operation");
-                var roleResult = await _roleManager.FindByNameAsync(role.Name);
-                var result = await _roleManager.DeleteAsync(role);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                ModelState.AddModelError("", "Invalid Operation");
-            }
-
-            return View(model);
-        }
-
         [HttpGet]
-        public async Task<IActionResult> AddorRemoveUser(string roleId)
+        public async Task<IActionResult> AddOrRemoveUsers(string roleId)
         {
+            if (string.IsNullOrEmpty(roleId)) return BadRequest();
             var role = await _roleManager.FindByIdAsync(roleId);
-            if (role is null) return NotFound();
-            ViewData["RoleId"] = role.Id;
-            ViewData["RoleName"] = role.Name;
-            var usersInRole = new List<UserRoleViewModelDto>();
-            var users = await _userManager.Users.ToListAsync();
+            if (role is null) return NotFound("No Role Found with this id");
 
+            ViewData["RoleId"] = roleId;
+            var usersInRole = new List<UserInRole>();
+            var users = _userManager.Users.ToList();
             foreach (var user in users)
             {
-                var UserInRole = new UserRoleViewModelDto()
+                var userInRole = new UserInRole
                 {
                     UserId = user.Id,
-                    UserName = user.UserName
+                    UserName = user.UserName!
                 };
-                if (await _userManager.IsInRoleAsync(user, role.Name))
-                {
-                    UserInRole.IsSelected = true;
-                }
-                else
-                {
-                    UserInRole.IsSelected = false;
-
-                }
-                usersInRole.Add(UserInRole);
+                if (await _userManager.IsInRoleAsync(user, role.Name!)) userInRole.IsSelected = true;
+                else userInRole.IsSelected = false;
+                usersInRole.Add(userInRole);
             }
-
             return View(usersInRole);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddorRemoveUser(string roleId, List<UserRoleViewModelDto> users)
+        public async Task<IActionResult> AddOrRemoveUsers(string roleId, List<UserInRole> users)
         {
             var role = await _roleManager.FindByIdAsync(roleId);
             if (role is null) return NotFound();
+
             if (ModelState.IsValid)
             {
                 foreach (var user in users)
@@ -201,9 +166,8 @@ namespace Company.A1.PL.Controllers
                 }
                 return RedirectToAction(nameof(Edit), new { id = roleId });
             }
+            ModelState.AddModelError("", "Invalid Operation");
             return View(users);
         }
-
-
     }
 }

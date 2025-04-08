@@ -10,18 +10,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Company.A1.BLL.Repositories
 {
+
     public class EmployeeRepository : GenericRepository<Employee>, IEmployeeRepository
     {
         private readonly CompanyDbContext _context;
 
-        public EmployeeRepository(CompanyDbContext context) : base(context) // Ask CLR To Create Object From CompanyDbContext
+        public EmployeeRepository(CompanyDbContext context) : base(context)
         {
-            _context = context;
+            this._context = context;
         }
 
-        public async Task<List<Employee>> GetByNameAsync (string name)
+        public async Task<IEnumerable<Employee>> GetByNameAsync(string input)
         {
-            return await _context.Employees.Include(E => E.Department).Where(E => E.Name.ToLower().Contains(name.ToLower())).ToListAsync();
+            return await _context.Employees.Where(E => E.Name.ToLower().Contains(input.ToLower())).ToListAsync();
         }
+
+
+
     }
 }

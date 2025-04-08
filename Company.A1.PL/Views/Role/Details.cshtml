@@ -1,15 +1,14 @@
-﻿@model CreateEmployeeDto
-
+﻿@model RoleToReturn
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details Employee</h1>
-<br />
-<br />
-<div>
-    <partial name="EmployeePartialView/_DeleteDetailsPartialView" />
-
-    <a asp-route="@Model." asp-action="Edit" class="btn btn-warning">Edit</a>
-    <a asp-action="Index" class="btn btn-light">Back To List</a>
+<h1>Details</h1>
+<div class="my-3">
+    <label asp-for="Id" class="col-form-label"></label>
+    <input asp-for="Id" class="form-control" readonly />
+</div>
+<div class="my-3">
+    <label asp-for="Name" class="col-form-label"></label>
+    <input asp-for="Name" class="form-control" readonly/>
 </div>

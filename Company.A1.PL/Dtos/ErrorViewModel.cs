@@ -1,5 +1,6 @@
 namespace Company.A1.PL.Models
 {
+
     public class ErrorViewModel
     {
         public string? RequestId { get; set; }

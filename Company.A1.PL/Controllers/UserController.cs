@@ -1,123 +1,101 @@
 ﻿using Company.A1.DAL.Models;
 using Company.A1.PL.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Company.A1.PL.Controllers
 {
-    public class UserController : Controller
+    [Authorize(Roles = "Admin")]
+    public class UserController(UserManager<AppUser> userManager) : Controller
     {
-        private readonly UserManager<AppUser> _userManager;
+        private readonly UserManager<AppUser> _userManager = userManager;
 
-        public UserController(UserManager<AppUser> userManager)
-        {
-            _userManager = userManager;
-        }
         [HttpGet]
         public async Task<IActionResult> Index(string? SearchInput)
         {
-            IEnumerable<UserToReturnDto> users;
+            IEnumerable<UserToReturn> users;
             if (string.IsNullOrEmpty(SearchInput))
             {
-                users = _userManager.Users.Select(U => new UserToReturnDto()
+                users = _userManager.Users.Select(U => new UserToReturn
                 {
                     Id = U.Id,
+                    UserName = U.UserName!,
+                    Email = U.Email!,
                     FirstName = U.FirstName,
                     LastName = U.LastName,
-                    UserName = U.UserName,
-                    Email = U.Email,
                     Roles = _userManager.GetRolesAsync(U).Result
+
                 });
             }
             else
             {
-                users = _userManager.Users.Select(U => new UserToReturnDto()
+                users = _userManager.Users.Select(U => new UserToReturn
                 {
                     Id = U.Id,
+                    UserName = U.UserName!,
+                    Email = U.Email!,
                     FirstName = U.FirstName,
                     LastName = U.LastName,
-                    UserName = U.UserName,
-                    Email = U.Email,
                     Roles = _userManager.GetRolesAsync(U).Result
-                }).Where(U => U.UserName.ToLower().Contains(SearchInput.ToLower()));
-            }
 
+                }).Where(u => u.FirstName.ToLower().Contains(SearchInput.ToLower()));
+            }
             return View(users);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Details(string? id, string viewname = "Details")
-        {
-            if (id is null) return BadRequest("Invalid Id");
-            var user = await _userManager.FindByIdAsync(id);
 
-            if (user is null) return NotFound(new { StatusCode = 404, Message = $"Employee with Id: {id} is Not found" });
-            var dto = new UserToReturnDto()
+        [HttpGet]
+        public async Task<IActionResult> Details(string? id, string viewName = "Details")
+        {
+            if (string.IsNullOrEmpty(id)) return BadRequest("Invalid Id");
+            var user = await _userManager.FindByIdAsync(id);
+            if (user is null) return NotFound(new { StatusCode = 404, message = $"User with id: {id} is not found" });
+            var dto = new UserToReturn
             {
                 Id = user.Id,
+                UserName = user.UserName!,
+                Email = user.Email!,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                UserName = user.UserName,
-                Email = user.Email,
-                Roles = _userManager.GetRolesAsync(user).Result,
+                Roles = _userManager.GetRolesAsync(user).Result
             };
-            return View(dto);
+            return View(viewName, dto);
         }
-        [HttpGet]
 
+        [HttpGet]
         public async Task<IActionResult> Edit(string? id)
         {
-
             return await Details(id, "Edit");
         }
+
         [HttpPost]
-        public async Task<IActionResult> Edit([FromRoute] string id, UserToReturnDto model)
+        public async Task<IActionResult> Edit([FromRoute] string id, UserToReturn model)
         {
             if (ModelState.IsValid)
             {
-                if (id != model.Id) return BadRequest("Invalid Operation");
+                if (id != model.Id) return BadRequest("Invalid Operations");
                 var user = await _userManager.FindByIdAsync(id);
-                if (user is null) return BadRequest("Invalid Operation");
-                user.UserName = model.UserName;
-                user.Email = model.Email;
+                if (user is null) return BadRequest("Invalid Operations");
+                user.UserName = model.UserName!;
+                user.Email = model.Email!;
                 user.FirstName = model.FirstName;
                 user.LastName = model.LastName;
-                var result = await _userManager.UpdateAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-            }
 
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded) return RedirectToAction(nameof(Index));
+            }
             return View(model);
         }
-        [HttpGet]
+
         public async Task<IActionResult> Delete(string? id)
         {
-
-            return await Details(id, "Delete");
+            if (string.IsNullOrEmpty(id)) return BadRequest();
+            var user = await _userManager.FindByIdAsync(id);
+            if (user is null) return BadRequest("Invalid Operations");
+            var result = await _userManager.DeleteAsync(user);
+            return RedirectToAction(nameof(Index));
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete([FromRoute] string id, UserToReturnDto model)
-        {
-            if (ModelState.IsValid)
-            {
-                if (id != model.Id) return BadRequest("Invalid Operation");
-                var user = await _userManager.FindByIdAsync(id);
-                if (user is null) return BadRequest("Invalid Operation");
-
-                var result = await _userManager.DeleteAsync(user);
-                if (result.Succeeded)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-            }
-
-            return View(model);
-        }
-
     }
 }

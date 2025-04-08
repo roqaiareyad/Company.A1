@@ -3,16 +3,13 @@ using Company.A1.DAL.Models;
 
 namespace Company.A1.PL.Dtos
 {
-    public class CreateDepartmentDto: BaseEntity
+    public class CreateDepartmentDto
     {
-        [Required(ErrorMessage = " Code is required !")]
+        [Required(ErrorMessage = "Code is Required!")]
         public string Code { get; set; }
-
-        [Required(ErrorMessage = " Name is required !")]
+        [Required(ErrorMessage = "Name is Required!")]
         public string Name { get; set; }
-
-        [Required(ErrorMessage = " CreatedDate is required !")]
-        public DateTime CreatedDate { get; set; }
-       
+        [Required(ErrorMessage = "CreateAt is Required!")]
+        public DateTime CreateAt { get; set; }
     }
 }

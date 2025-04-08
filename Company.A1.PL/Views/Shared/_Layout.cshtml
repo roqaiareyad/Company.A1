@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿﻿
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,10 +11,11 @@
     <link rel="stylesheet" href="~/Company.A1.PL.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @*Header Start*@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Company.A1.PL</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Company.Roqyy.PL</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -26,10 +29,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Index" >Department</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Department" asp-action="Index">Department</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Employee" asp-action="Index">Employee</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="User" asp-action="Index">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Role" asp-action="Index">Roles</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav flex-grow-1">
@@ -41,24 +50,30 @@
             </div>
         </nav>
     </header>
+    @*Header End*@
 
-
+    @*Body Start*@
     <div class="container">
         <main role="main" class="pb-3">
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
             @RenderBody()
         </main>
     </div>
+    @*Body End*@
 
-
+    @*Footer Start*@
     <footer class="border-top footer text-muted">
         <div class="container">
             &copy; 2025 - Company.A1.PL - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    @*Footer End*@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
     @await RenderSectionAsync("ValidationSection", required: false)
 </body>
 </html>
