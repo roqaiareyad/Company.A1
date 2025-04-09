@@ -3,6 +3,7 @@ using Company.A1.PL.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Company.A1.PL.Controllers
@@ -15,34 +16,30 @@ namespace Company.A1.PL.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? SearchInput)
         {
-            IEnumerable<UserToReturn> users;
-            if (string.IsNullOrEmpty(SearchInput))
-            {
-                users = _userManager.Users.Select(U => new UserToReturn
-                {
-                    Id = U.Id,
-                    UserName = U.UserName!,
-                    Email = U.Email!,
-                    FirstName = U.FirstName,
-                    LastName = U.LastName,
-                    Roles = _userManager.GetRolesAsync(U).Result
+            var usersList = string.IsNullOrEmpty(SearchInput)
+                ? await _userManager.Users.ToListAsync()
+                : await _userManager.Users
+                      .Where(u => u.FirstName.ToLower().Contains(SearchInput.ToLower()))
+                      .ToListAsync();
 
+            var users = new List<UserToReturn>();
+
+            foreach (var user in usersList)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                users.Add(new UserToReturn
+                {
+                    Id = user.Id,
+                    UserName = user.UserName!,
+                    Email = user.Email!,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Roles = roles
                 });
             }
-            else
-            {
-                users = _userManager.Users.Select(U => new UserToReturn
-                {
-                    Id = U.Id,
-                    UserName = U.UserName!,
-                    Email = U.Email!,
-                    FirstName = U.FirstName,
-                    LastName = U.LastName,
-                    Roles = _userManager.GetRolesAsync(U).Result
 
-                }).Where(u => u.FirstName.ToLower().Contains(SearchInput.ToLower()));
-            }
             return View(users);
+        
         }
 
 
@@ -50,8 +47,13 @@ namespace Company.A1.PL.Controllers
         public async Task<IActionResult> Details(string? id, string viewName = "Details")
         {
             if (string.IsNullOrEmpty(id)) return BadRequest("Invalid Id");
+
             var user = await _userManager.FindByIdAsync(id);
-            if (user is null) return NotFound(new { StatusCode = 404, message = $"User with id: {id} is not found" });
+            if (user is null)
+                return NotFound(new { StatusCode = 404, message = $"User with id: {id} is not found" });
+
+            var roles = await _userManager.GetRolesAsync(user); // ✅ await هنا
+
             var dto = new UserToReturn
             {
                 Id = user.Id,
@@ -59,8 +61,9 @@ namespace Company.A1.PL.Controllers
                 Email = user.Email!,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Roles = _userManager.GetRolesAsync(user).Result
+                Roles = roles
             };
+
             return View(viewName, dto);
         }
 
