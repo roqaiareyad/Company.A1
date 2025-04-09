@@ -22,7 +22,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Employee\EmployeePartialViews\" />
     <Folder Include="wwwroot\files\images\" />
     <Folder Include="wwwroot\files\videos\" />
   </ItemGroup>

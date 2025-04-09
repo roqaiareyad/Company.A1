@@ -38,6 +38,8 @@ namespace Company.A1.PL.Authentication
 
             // send message
             smtp.Send(mail);
+            smtp.Disconnect(true);
+
         }
     }
 }

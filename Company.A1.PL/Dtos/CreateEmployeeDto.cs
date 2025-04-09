@@ -10,7 +10,7 @@ namespace Company.A1.PL.Dtos
         public string Name { get; set; }
 
 
-        [Range(22, 60, ErrorMessage = "Age Must Be Between 22 & 60")]
+        [Range(20, 60, ErrorMessage = "Age Must Be Between 20 & 60")]
         public int? Age { get; set; }
 
 

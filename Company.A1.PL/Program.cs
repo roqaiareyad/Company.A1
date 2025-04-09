@@ -56,17 +56,19 @@ namespace Company.A1.PL
             {
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
- .AddCookie()
- .AddGoogle(o =>
- {
-     o.ClientId = builder.Configuration["Authentication:Google:ClientId"];
-     o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
- })
- .AddFacebook(facebookOptions =>
- {
-     facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
-     facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
- });
+              .AddCookie()
+                                         .AddGoogle(o =>
+                                         {
+                                             o.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+                                             o.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+                                             o.CallbackPath = "/signin-google"; 
+                                         })
+                                         .AddFacebook(facebookOptions =>
+                                         {
+                                             facebookOptions.AppId = builder.Configuration["Authentication:Facebook:AppId"];
+                                             facebookOptions.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
+                                             facebookOptions.CallbackPath = "/signin-facebook";
+                                         });
 
             // Dependency Injection: Allow clr to create objects of this class instead of the class itself handles it
             // Services LifeTimes

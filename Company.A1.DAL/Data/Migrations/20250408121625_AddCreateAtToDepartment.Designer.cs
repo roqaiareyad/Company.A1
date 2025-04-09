@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Company.A1.DAL.Data.Migrations
 {
     [DbContext(typeof(CompanyDbContext))]
-    [Migration("20250408052444_AddCreateAtToDepartment")]
+    [Migration("20250408121625_AddCreateAtToDepartment")]
     partial class AddCreateAtToDepartment
     {
         /// <inheritdoc />
