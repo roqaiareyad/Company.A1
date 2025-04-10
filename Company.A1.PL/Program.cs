@@ -32,7 +32,7 @@ namespace Company.A1.PL
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddDbContext<CompanyDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             }); // Allows DI for DbContext
             builder.Services.AddScoped<IScopedService, ScopedService>(); // per request
             builder.Services.AddScoped<ITransientService, TransientService>(); // per operation

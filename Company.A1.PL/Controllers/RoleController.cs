@@ -10,7 +10,7 @@ using static Company.A1.PL.Dtos.RoleToReturn;
 namespace Company.A1.PL.Controllers
 {
 
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class RoleController(RoleManager<IdentityRole> roleManager, UserManager<AppUser> userManager) : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager = roleManager;
