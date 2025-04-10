@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Company.A1.PL.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class UserController(UserManager<AppUser> userManager) : Controller
     {
         private readonly UserManager<AppUser> _userManager = userManager;
